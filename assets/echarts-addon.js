@@ -132,10 +132,20 @@
 
     chart.on('click', function (params) {
       var link = '';
+      var linkTarget = '_self';
 
       if (params && params.data && typeof params.data === 'object' && !Array.isArray(params.data)) {
         if (typeof params.data.link === 'string' && params.data.link !== '') {
           link = params.data.link;
+        } else if (params.data.link && typeof params.data.link === 'object' && typeof params.data.link.href === 'string' && params.data.link.href !== '') {
+          link = params.data.link.href;
+          if (typeof params.data.link.target === 'string' && params.data.link.target !== '') {
+            linkTarget = params.data.link.target;
+          }
+        }
+
+        if (typeof params.data.link_target === 'string' && params.data.link_target !== '') {
+          linkTarget = params.data.link_target;
         }
       }
 
@@ -147,6 +157,14 @@
       }
 
       if (typeof link === 'string' && link !== '') {
+        if (linkTarget === '_blank') {
+          var win = window.open(link, '_blank', 'noopener,noreferrer');
+          if (win) {
+            win.opener = null;
+          }
+          return;
+        }
+
         window.location.href = link;
       }
     });

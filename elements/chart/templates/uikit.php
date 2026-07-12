@@ -9,8 +9,11 @@ $chartTitle = trim((string) ($elementData['chart_title'] ?? ''));
 $chartType = trim((string) ($elementData['chart_type'] ?? 'bar'));
 $height = trim((string) ($elementData['height'] ?? '380'));
 $sourceType = trim((string) ($elementData['source_type'] ?? 'manual'));
-$manualData = (string) ($elementData['manual_data'] ?? '');
-$manualColors = (string) ($elementData['manual_colors'] ?? '');
+$manualItems = $elementData['manual_items'] ?? [];
+$csvData = (string) ($elementData['csv_data'] ?? '');
+$csvDelimiter = trim((string) ($elementData['csv_delimiter'] ?? ','));
+$csvHasHeader = in_array((string) ($elementData['csv_has_header'] ?? '1'), ['1', 'true', 'on', 'yes'], true);
+$globalColor = trim((string) ($elementData['global_color'] ?? ''));
 $yformTable = trim((string) ($elementData['yform_table'] ?? ''));
 $yformLabelField = trim((string) ($elementData['yform_label_field'] ?? 'name'));
 $yformValueField = trim((string) ($elementData['yform_value_field'] ?? 'value'));
@@ -23,8 +26,10 @@ $optionsJson = trim((string) ($elementData['chart_options_json'] ?? ''));
 
 if ($sourceType === 'yform') {
     $rows = DataResolver::fromYform($yformTable, $yformLabelField, $yformValueField, $yformLimit);
+} elseif ($sourceType === 'csv') {
+    $rows = DataResolver::fromCsv($csvData, $csvDelimiter, $csvHasHeader);
 } else {
-    $rows = DataResolver::fromManual($manualData);
+    $rows = DataResolver::fromManualItems($manualItems);
 }
 
 $options = [];
@@ -44,7 +49,10 @@ if ($options === []) {
         return;
     }
 
-    $palette = PresetFactory::parsePalette($manualColors);
+    $palette = [];
+    if (preg_match('/^#[0-9a-fA-F]{6}$/', $globalColor) === 1) {
+        $palette = [strtolower($globalColor)];
+    }
     $options = PresetFactory::fromType($chartType, $rows, $chartTitle, $showLegend, $palette, $showTooltip, $showLabels, $showGrid);
 }
 ?>

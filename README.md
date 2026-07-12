@@ -7,6 +7,10 @@ Dieses AddOn integriert Apache ECharts in REDAXO mit Fokus auf:
 - Nutzung in Modulen und Templates per PHP-Helper
 - Demo-Seite im Backend
 
+Projektseite Apache ECharts:
+
+- https://echarts.apache.org/
+
 ## Features
 
 - Chart-Typen: Balken, Linie, Fläche, Pie, Donut, Scatter
@@ -121,17 +125,54 @@ echo '<script defer src="' . $addon->getAssetsUrl('echarts-addon.js') . '"></scr
 
 ## Manuelle Daten (Builder)
 
-Pro Zeile wird dieses Format unterstützt:
+Interaktive Eingabe (Repeater):
 
-- `Label|Wert`
-- `Label|Wert|Link`
-- `Label|Wert|Link|Tooltip`
-- `Label|Wert||Tooltip` (Link leer, Tooltip gesetzt)
+- Datenpunkte als Liste mit `Label`, `Wert`, optional `Link (smart_link)`, optional `Tooltip`
+- Farbe optional direkt pro Datenpunkt (Color-Picker)
+- Optionale globale Standardfarbe als Fallback
+
+CSV als dritte Eingabevariante:
+
+- Datenquelle auf `CSV` stellen
+- CSV-Inhalt einfügen (mit oder ohne Header)
+- Trennzeichen wählen (`,`, `;`, `Tab`)
+- Optional: Header aktivieren/deaktivieren
+
+Empfohlene Header-Spalten:
+
+- `label`, `value`, `link`, `tooltip`, `color`, `has_link`, `has_color`
+
+Beispiel:
+
+```csv
+label,value,tooltip,color,has_color
+Q1,120,Start,#111111,1
+Q2,180,Wachstum,,0
+```
+
+Globale Optionen liegen im Modal `Einstellungen & Globals`:
+
+- globale Standardfarbe
+- Anzeigeoptionen (Legende, Tooltip, Labels, Grid)
+- YForm-Quellfelder
+- JSON-Override
+
+Priorität der Farben:
+
+- Datenpunkt-Farbe überschreibt alles
+- Wenn keine Datenpunkt-Farbe gesetzt ist, wird die globale Standardfarbe genutzt
+- Wenn auch diese leer ist, greift die automatische Default-Palette
+
+Sichtbarkeit im Builder (conditional fields):
+
+- Bei `Datenquelle = Manuell` werden nur manuelle Daten-/Farbfelder angezeigt
+- Bei `Datenquelle = YForm` werden nur YForm-Felder angezeigt
 
 Link-Regeln:
 
-- Numerisch (`5`) wird als REDAXO-Artikel-ID behandelt
-- Externe URL mit `https://...`
+- SmartLink im Repeater unterstützt alle Typen: `intern`, `url`, `media`, `mail`, `tel`, `yform`
+- SmartLink-Optionen werden berücksichtigt (z. B. PDF.js bei Media-PDF)
+- Externe Links werden im neuen Tab geöffnet, interne im selben Tab
 
 Beim Klick auf den Datenpunkt wird der Link geöffnet, wenn einer gesetzt ist.
 Tooltip-Text wird angezeigt, wenn eine Tooltip-Spalte befüllt ist.
@@ -189,3 +230,16 @@ Wichtig: Die Demo-Daten sind bewusst optional und jederzeit wieder entfernbar.
 ## Hinweis
 
 Das AddOn nutzt eine lokale `echarts.min.js` im Addon-Asset-Ordner.
+
+## Lizenz
+
+AddOn-Lizenz:
+
+- MIT
+- siehe `LICENSE.md`
+
+Vendor (Apache ECharts):
+
+- Projekt: https://echarts.apache.org/
+- Lizenz: Apache License 2.0
+- Lizenztext: https://www.apache.org/licenses/LICENSE-2.0

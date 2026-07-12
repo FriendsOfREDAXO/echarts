@@ -6,6 +6,24 @@ return [
     'description' => 'Bar, Line, Area, Pie, Donut und Scatter aus manuellen Daten oder YForm.',
     'version' => '1.0.0',
     'category' => 'content',
+    'settings_modal' => [
+        'label' => 'Einstellungen & Globals',
+        'icon' => 'fa-sliders',
+        'fieldsets' => [
+            [
+                'label' => 'Farben',
+                'fields' => ['global_color'],
+            ],
+            [
+                'label' => 'Anzeige',
+                'fields' => ['show_legend', 'show_tooltip', 'show_labels', 'show_grid'],
+            ],
+            [
+                'label' => 'Erweitert',
+                'fields' => ['chart_options_json'],
+            ],
+        ],
+    ],
     'fields' => [
         'headline' => [
             'type' => 'text',
@@ -39,23 +57,98 @@ return [
             'label' => 'Datenquelle',
             'choices' => [
                 'manual' => 'Manuelle Werte',
+                'csv' => 'CSV',
                 'yform' => 'YForm-Tabelle',
             ],
             'default' => 'manual',
         ],
-        'manual_data' => [
-            'type' => 'textarea',
-            'label' => 'Manuelle Daten',
-            'rows' => 6,
-            'notice' => 'Eine Zeile pro Wert: Name|Wert|Link(optional)|Tooltip(optional). Link: Artikel-ID oder https://... Link darf leer sein (z. B. Name|12||Mein Tooltip).',
-            'default' => "Q1|120\nQ2|180\nQ3|150\nQ4|210",
+        'manual_items' => [
+            'type' => 'repeater',
+            'label' => 'Manuelle Datenpunkte',
+            'add_label' => '+ Datenpunkt hinzufügen',
+            'view' => 'list',
+            'visible_if' => ['source_type' => ['manual']],
+            'item_modal' => [
+                'label' => 'Optionen',
+                'icon' => 'fa-sliders',
+                'modal_size' => 'xl',
+                'trigger_after' => 'value',
+                'fields' => ['tooltip', 'has_color', 'color', 'has_link', 'link'],
+            ],
+            'fields' => [
+                'label' => [
+                    'type' => 'text',
+                    'label' => 'Label',
+                    'required' => true,
+                    'col' => 8,
+                ],
+                'value' => [
+                    'type' => 'text',
+                    'label' => 'Wert',
+                    'required' => true,
+                    'col' => 4,
+                ],
+                'tooltip' => [
+                    'type' => 'text',
+                    'label' => 'Tooltip (optional)',
+                    'col' => 12,
+                ],
+                'has_color' => [
+                    'type' => 'checkbox',
+                    'label' => 'Farbe aktivieren',
+                    'default' => 0,
+                    'col' => 6,
+                ],
+                'color' => [
+                    'type' => 'color',
+                    'label' => 'Farbwert',
+                    'col' => 6,
+                    'visible_if' => ['has_color' => ['1']],
+                ],
+                'has_link' => [
+                    'type' => 'checkbox',
+                    'label' => 'Link aktivieren',
+                    'default' => 0,
+                    'col' => 6,
+                ],
+                'link' => [
+                    'type' => 'smart_link',
+                    'label' => 'Link (optional)',
+                    'notice' => 'Smart Link: intern, extern, Media, Mail, Tel',
+                    'col' => 12,
+                    'visible_if' => ['has_link' => ['1']],
+                ],
+            ],
         ],
-        'manual_colors' => [
+        'global_color' => [
+            'type' => 'color',
+            'label' => 'Globale Standardfarbe (optional)',
+            'notice' => 'Wird verwendet, wenn ein Punkt keine eigene Farbe hat.',
+        ],
+        'csv_data' => [
             'type' => 'textarea',
-            'label' => 'Manuelle Farben',
-            'rows' => 4,
-            'notice' => 'Optional: Eine Farbe pro Zeile (z. B. #3b82f6, #10b981, rgb(239,68,68)). Bei genau 1 Hex-Farbe werden automatisch passende Nuancen erzeugt.',
-            'default' => "#3b82f6\n#10b981\n#f59e0b\n#ef4444",
+            'label' => 'CSV-Daten',
+            'rows' => 8,
+            'notice' => 'Mit Header (empfohlen): label,value,link,tooltip,color,has_link,has_color',
+            'default' => "label,value,tooltip\nQ1,120,Start\nQ2,180,Wachstum",
+            'visible_if' => ['source_type' => ['csv']],
+        ],
+        'csv_delimiter' => [
+            'type' => 'choice',
+            'label' => 'CSV-Trennzeichen',
+            'choices' => [
+                ',' => 'Komma (,)',
+                ';' => 'Semikolon (;)',
+                'tab' => 'Tab',
+            ],
+            'default' => ',',
+            'visible_if' => ['source_type' => ['csv']],
+        ],
+        'csv_has_header' => [
+            'type' => 'checkbox',
+            'label' => 'Erste Zeile ist Header',
+            'default' => 1,
+            'visible_if' => ['source_type' => ['csv']],
         ],
         'show_legend' => [
             'type' => 'checkbox',
@@ -81,21 +174,25 @@ return [
             'type' => 'text',
             'label' => 'YForm-Tabelle',
             'notice' => 'Beispiel: rex_sales',
+            'visible_if' => ['source_type' => ['yform']],
         ],
         'yform_label_field' => [
             'type' => 'text',
             'label' => 'YForm Label-Feld',
             'default' => 'name',
+            'visible_if' => ['source_type' => ['yform']],
         ],
         'yform_value_field' => [
             'type' => 'text',
             'label' => 'YForm Value-Feld',
             'default' => 'value',
+            'visible_if' => ['source_type' => ['yform']],
         ],
         'yform_limit' => [
             'type' => 'text',
             'label' => 'YForm Limit',
             'default' => '12',
+            'visible_if' => ['source_type' => ['yform']],
         ],
         'chart_options_json' => [
             'type' => 'echarts_option',

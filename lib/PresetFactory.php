@@ -63,6 +63,36 @@ final class PresetFactory
     }
 
     /**
+     * @param mixed $items
+     * @return list<string>
+     */
+    public static function parsePaletteItems(mixed $items): array
+    {
+        if (is_string($items)) {
+            $decoded = json_decode($items, true);
+            $items = is_array($decoded) ? $decoded : [];
+        }
+
+        if (!is_array($items)) {
+            return [];
+        }
+
+        $lines = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $color = trim((string) ($item['color'] ?? $item['value'] ?? ''));
+            if ($color !== '') {
+                $lines[] = $color;
+            }
+        }
+
+        return self::parsePalette(implode("\n", $lines));
+    }
+
+    /**
      * @param list<array{name: string, value: float|int|string}> $rows
      * @param list<string> $palette
      * @return array<string, mixed>
@@ -90,6 +120,12 @@ final class PresetFactory
             $point = ['value' => $value];
             if (isset($row['link']) && is_string($row['link']) && $row['link'] !== '') {
                 $point['link'] = $row['link'];
+                if (isset($row['link_target']) && is_string($row['link_target']) && $row['link_target'] !== '') {
+                    $point['link_target'] = $row['link_target'];
+                }
+                if (isset($row['link_rel']) && is_string($row['link_rel']) && $row['link_rel'] !== '') {
+                    $point['link_rel'] = $row['link_rel'];
+                }
             }
             if (isset($row['tooltip']) && is_string($row['tooltip']) && $row['tooltip'] !== '') {
                 $point['tooltip'] = $row['tooltip'];
@@ -107,6 +143,12 @@ final class PresetFactory
             if ($paletteSize > 0) {
                 $seriesItem['itemStyle'] = [
                     'color' => $palette[$index % $paletteSize],
+                ];
+            }
+
+            if (isset($row['color']) && is_string($row['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $row['color']) === 1) {
+                $seriesItem['itemStyle'] = [
+                    'color' => strtolower($row['color']),
                 ];
             }
 
@@ -159,8 +201,17 @@ final class PresetFactory
         $lineData = [];
         foreach ($rows as $row) {
             $item = ['value' => (float) ($row['value'] ?? 0)];
+            if (isset($row['color']) && is_string($row['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $row['color']) === 1) {
+                $item['itemStyle'] = ['color' => strtolower($row['color'])];
+            }
             if (isset($row['link']) && is_string($row['link']) && $row['link'] !== '') {
                 $item['link'] = $row['link'];
+                if (isset($row['link_target']) && is_string($row['link_target']) && $row['link_target'] !== '') {
+                    $item['link_target'] = $row['link_target'];
+                }
+                if (isset($row['link_rel']) && is_string($row['link_rel']) && $row['link_rel'] !== '') {
+                    $item['link_rel'] = $row['link_rel'];
+                }
             }
             if (isset($row['tooltip']) && is_string($row['tooltip']) && $row['tooltip'] !== '') {
                 $item['tooltip'] = $row['tooltip'];
@@ -216,8 +267,17 @@ final class PresetFactory
                         'name' => (string) $row['name'],
                         'value' => (float) $row['value'],
                     ];
+                    if (isset($row['color']) && is_string($row['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $row['color']) === 1) {
+                        $item['itemStyle'] = ['color' => strtolower($row['color'])];
+                    }
                     if (isset($row['link']) && is_string($row['link']) && $row['link'] !== '') {
                         $item['link'] = $row['link'];
+                        if (isset($row['link_target']) && is_string($row['link_target']) && $row['link_target'] !== '') {
+                            $item['link_target'] = $row['link_target'];
+                        }
+                        if (isset($row['link_rel']) && is_string($row['link_rel']) && $row['link_rel'] !== '') {
+                            $item['link_rel'] = $row['link_rel'];
+                        }
                     }
                     if (isset($row['tooltip']) && is_string($row['tooltip']) && $row['tooltip'] !== '') {
                         $item['tooltip'] = $row['tooltip'];
@@ -251,8 +311,17 @@ final class PresetFactory
         $points = [];
         foreach ($rows as $index => $row) {
             $item = ['value' => [$index + 1, (float) $row['value']]];
+            if (isset($row['color']) && is_string($row['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', $row['color']) === 1) {
+                $item['itemStyle'] = ['color' => strtolower($row['color'])];
+            }
             if (isset($row['link']) && is_string($row['link']) && $row['link'] !== '') {
                 $item['link'] = $row['link'];
+                if (isset($row['link_target']) && is_string($row['link_target']) && $row['link_target'] !== '') {
+                    $item['link_target'] = $row['link_target'];
+                }
+                if (isset($row['link_rel']) && is_string($row['link_rel']) && $row['link_rel'] !== '') {
+                    $item['link_rel'] = $row['link_rel'];
+                }
             }
             if (isset($row['tooltip']) && is_string($row['tooltip']) && $row['tooltip'] !== '') {
                 $item['tooltip'] = $row['tooltip'];
@@ -345,10 +414,25 @@ final class PresetFactory
             return [$hex];
         }
 
+        // Relative luminance (0..1). We widen the gradient for very dark/light base colors.
+        $luminance = ((0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b)) / 255;
+
+        $minFactor = -0.28;
+        $maxFactor = 0.56;
+
+        if ($luminance <= 0.12) {
+            // Very dark colors (e.g. black): only lighten strongly so shades are clearly visible.
+            $minFactor = 0.12;
+            $maxFactor = 0.88;
+        } elseif ($luminance >= 0.88) {
+            // Very light colors (e.g. white): only darken strongly so shades are clearly visible.
+            $minFactor = -0.88;
+            $maxFactor = -0.12;
+        }
+
         for ($i = 0; $i < $count; ++$i) {
-            // Build a smooth gradient from darker to lighter shade.
             $ratio = $i / ($count - 1);
-            $factor = -0.28 + (0.56 * $ratio);
+            $factor = $minFactor + (($maxFactor - $minFactor) * $ratio);
             $result[] = self::adjustRgbLightness($r, $g, $b, $factor);
         }
 

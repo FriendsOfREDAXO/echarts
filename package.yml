@@ -1,0 +1,23 @@
+package: echarts
+version: '1.0.0'
+author: 'Friends Of REDAXO'
+supportpage: 'https://github.com/FriendsOfREDAXO'
+requires:
+  php: '>=8.1'
+  redaxo: '>=5.14'
+
+default_config:
+  auto_frontend_assets: true
+
+page:
+  title: 'translate:echarts_title'
+  perm: 'echarts[]'
+  icon: 'rex-icon fa-bar-chart'
+  subpages:
+    settings:
+      title: 'translate:echarts_settings'
+    demo:
+      title: 'translate:echarts_demo'
+    readme:
+      title: 'translate:echarts_readme'
+      subPath: README.md

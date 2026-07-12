@@ -1,0 +1,55 @@
+name: Vendor Sync Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/vendor-sync-check.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/sync-echarts-vendor.mjs'
+      - 'assets/echarts.min.js'
+      - 'assets/echarts.vendor-version.txt'
+  pull_request:
+    paths:
+      - '.github/workflows/vendor-sync-check.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/sync-echarts-vendor.mjs'
+      - 'assets/echarts.min.js'
+      - 'assets/echarts.vendor-version.txt'
+  workflow_dispatch:
+
+jobs:
+  vendor-sync:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: .
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync vendor into assets
+        run: npm run vendor:sync
+
+      - name: Ensure vendor files are committed
+        run: |
+          if ! git diff --quiet -- assets/echarts.min.js assets/echarts.vendor-version.txt; then
+            echo "::error::Vendor files are out of sync. Run 'npm run vendor:sync' and commit the changes."
+            git --no-pager diff -- assets/echarts.min.js assets/echarts.vendor-version.txt
+            exit 1
+          fi

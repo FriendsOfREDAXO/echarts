@@ -1,0 +1,14 @@
+{
+  "name": "@friends-of-redaxo/echarts-addon-vendor",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Vendor tooling for REDAXO echarts addon",
+  "scripts": {
+    "vendor:sync": "node ./scripts/sync-echarts-vendor.mjs",
+    "vendor:install": "npm install && npm run vendor:sync",
+    "vendor:update": "npm update echarts && npm run vendor:sync"
+  },
+  "dependencies": {
+    "echarts": "^6.0.0"
+  }
+}

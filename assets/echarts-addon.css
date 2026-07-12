@@ -1,0 +1,28 @@
+.rex-echarts-chart {
+  width: 100%;
+  min-height: 220px;
+}
+
+.echarts-element {
+  margin: 0 0 1.5rem;
+}
+
+.rex-echarts-yform-preview {
+  margin-top: 1rem;
+  border: 1px solid #d7dce0;
+  border-radius: 6px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+body.rex-theme-dark .rex-echarts-yform-preview {
+  border-color: #384656;
+  background: #1f2933;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.rex-has-theme:not(.rex-theme-light) .rex-echarts-yform-preview {
+    border-color: #384656;
+    background: #1f2933;
+  }
+}

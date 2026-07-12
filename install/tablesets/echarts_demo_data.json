@@ -1,0 +1,65 @@
+{
+  "{{TABLE_PREFIX}}echarts_demo_data": {
+    "table": {
+      "table_name": "{{TABLE_PREFIX}}echarts_demo_data",
+      "name": "ECharts Demo Daten",
+      "description": "Optionale Beispieldaten für das ECharts-Addon",
+      "status": 1,
+      "list_sortfield": "id",
+      "list_sortorder": "ASC",
+      "search_active": 1,
+      "hidden": 0,
+      "export": 1,
+      "import": 1,
+      "mass_deletion": 1,
+      "mass_edit": 1,
+      "schema_overwrite": 1
+    },
+    "fields": [
+      {
+        "type_id": "value",
+        "type_name": "text",
+        "name": "name",
+        "label": "Name",
+        "db_type": "varchar(191)",
+        "not_required": "1",
+        "list_hidden": 0,
+        "search": 1,
+        "table_name": "{{TABLE_PREFIX}}echarts_demo_data"
+      },
+      {
+        "type_id": "value",
+        "type_name": "text",
+        "name": "value",
+        "label": "Wert",
+        "db_type": "varchar(191)",
+        "not_required": "1",
+        "list_hidden": 0,
+        "search": 1,
+        "table_name": "{{TABLE_PREFIX}}echarts_demo_data"
+      },
+      {
+        "type_id": "value",
+        "type_name": "text",
+        "name": "category",
+        "label": "Kategorie",
+        "db_type": "varchar(191)",
+        "not_required": "1",
+        "list_hidden": 0,
+        "search": 1,
+        "table_name": "{{TABLE_PREFIX}}echarts_demo_data"
+      },
+      {
+        "type_id": "value",
+        "type_name": "prio",
+        "name": "sort_order",
+        "label": "Sortierung",
+        "db_type": "varchar(191)",
+        "not_required": "1",
+        "list_hidden": 0,
+        "search": 0,
+        "table_name": "{{TABLE_PREFIX}}echarts_demo_data"
+      }
+    ]
+  }
+}

@@ -11,6 +11,10 @@ Projektseite Apache ECharts:
 
 - https://echarts.apache.org/
 
+GitHub-Page Inhalt (Doku-Startseite):
+
+- docs/index.md
+
 ## Features
 
 - Chart-Typen: Balken, Linie, Fläche, Pie, Donut, Scatter

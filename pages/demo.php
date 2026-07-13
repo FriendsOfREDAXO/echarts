@@ -124,45 +124,33 @@ $lineRaceFrames = [
     ],
 ];
 
-$lineRaceApacheYears = ['2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
-$lineRaceApacheFrames = [
-    [
-        'name' => 'Jan',
-        'series' => [
-            ['name' => rex_i18n::msg('echarts_demo_city_beijing'), 'values' => [62, 64, 67, 69, 73, 78, 82, 85, 88]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shanghai'), 'values' => [54, 58, 60, 63, 67, 71, 75, 80, 84]],
-            ['name' => rex_i18n::msg('echarts_demo_city_guangzhou'), 'values' => [45, 47, 50, 53, 56, 60, 63, 66, 70]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shenzhen'), 'values' => [40, 44, 48, 52, 58, 63, 69, 74, 81]],
-        ],
-    ],
-    [
-        'name' => 'Apr',
-        'series' => [
-            ['name' => rex_i18n::msg('echarts_demo_city_beijing'), 'values' => [66, 68, 70, 73, 76, 81, 84, 88, 92]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shanghai'), 'values' => [58, 61, 64, 67, 71, 75, 79, 83, 88]],
-            ['name' => rex_i18n::msg('echarts_demo_city_guangzhou'), 'values' => [47, 50, 53, 55, 59, 63, 66, 70, 74]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shenzhen'), 'values' => [44, 48, 53, 58, 63, 69, 74, 81, 89]],
-        ],
-    ],
-    [
-        'name' => 'Jul',
-        'series' => [
-            ['name' => rex_i18n::msg('echarts_demo_city_beijing'), 'values' => [69, 71, 74, 76, 79, 83, 87, 91, 95]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shanghai'), 'values' => [60, 64, 67, 70, 74, 78, 82, 87, 91]],
-            ['name' => rex_i18n::msg('echarts_demo_city_guangzhou'), 'values' => [49, 52, 56, 59, 63, 66, 70, 73, 77]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shenzhen'), 'values' => [46, 51, 56, 61, 67, 72, 78, 85, 93]],
-        ],
-    ],
-    [
-        'name' => 'Oct',
-        'series' => [
-            ['name' => rex_i18n::msg('echarts_demo_city_beijing'), 'values' => [72, 75, 78, 81, 84, 88, 92, 96, 101]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shanghai'), 'values' => [63, 67, 70, 74, 78, 82, 86, 91, 96]],
-            ['name' => rex_i18n::msg('echarts_demo_city_guangzhou'), 'values' => [52, 55, 59, 62, 66, 70, 73, 77, 81]],
-            ['name' => rex_i18n::msg('echarts_demo_city_shenzhen'), 'values' => [49, 54, 60, 65, 71, 77, 84, 91, 99]],
-        ],
-    ],
+$lineRaceApacheCountries = ['Finland', 'France', 'Germany', 'Iceland', 'Norway', 'Poland', 'Russia', 'United Kingdom'];
+$lineRaceApacheYears = [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
+$lineRaceApacheIncomeByCountry = [
+    'Finland' => [5600, 9200, 13800, 18800, 24700, 30100, 36700, 41800],
+    'France' => [6200, 9800, 14500, 19700, 25800, 31400, 38100, 43600],
+    'Germany' => [6000, 10100, 15400, 20900, 27100, 32900, 40200, 46800],
+    'Iceland' => [5400, 9100, 14100, 19600, 26100, 33200, 41000, 49600],
+    'Norway' => [6400, 10200, 15700, 22300, 30500, 38700, 48500, 59200],
+    'Poland' => [3000, 4200, 6100, 7600, 9800, 13200, 18700, 24400],
+    'Russia' => [4100, 5600, 7600, 9300, 11200, 14300, 19700, 26300],
+    'United Kingdom' => [6700, 9900, 14700, 19400, 24300, 30100, 36400, 42200],
 ];
+
+$lineRaceApacheRawData = [['Income', 'LifeExpectancy', 'Population', 'Country', 'Year']];
+foreach ($lineRaceApacheCountries as $countryName) {
+    $incomeValues = $lineRaceApacheIncomeByCountry[$countryName] ?? [];
+    foreach ($lineRaceApacheYears as $yearIndex => $yearValue) {
+        $incomeValue = (float) ($incomeValues[$yearIndex] ?? 0);
+        $lineRaceApacheRawData[] = [
+            $incomeValue,
+            62 + ($yearIndex * 2),
+            2_000_000 + ($yearIndex * 120_000),
+            $countryName,
+            $yearValue,
+        ];
+    }
+}
 
 $scatterRows = [
     ['name' => 'P1', 'value' => 5.2],
@@ -258,37 +246,557 @@ $nrwCompanyCoverageRows = [
     ['name' => 'Unna', 'value' => 1],
 ];
 
-$fvnCircleRows = [
-    ['name' => 'Kreis Düsseldorf', 'value' => 74],
-    ['name' => 'Kreis Solingen', 'value' => 61],
-    ['name' => 'Kreis Wuppertal/Niederberg', 'value' => 66],
-    ['name' => 'Kreis Mönchengladbach/Viersen', 'value' => 59],
-    ['name' => 'Kreis Grevenbroich/Neuss', 'value' => 63],
-    ['name' => 'Kreis Kempen/Krefeld', 'value' => 57],
-    ['name' => 'Kreis Moers', 'value' => 55],
-    ['name' => 'Kreis Kleve/Geldern', 'value' => 52],
-    ['name' => 'Kreis Duisburg/Mülheim/Dinslaken', 'value' => 70],
-    ['name' => 'Kreis Oberhausen/Bottrop', 'value' => 58],
-    ['name' => 'Kreis Rees/Bocholt', 'value' => 50],
-    ['name' => 'Kreis Essen', 'value' => 62],
-    ['name' => 'Kreis Remscheid', 'value' => 53],
+$fvnVisualConfig = [
+    'useGradients' => true,
+    'gradientLighten' => 0.16,
+    'gradientDarken' => 0.08,
+    'hoverLighten' => 0.22,
+    'hoverDarken' => 0.05,
+    'hoverZoom' => true,
+    'seriesShadowColor' => 'rgba(11, 33, 24, 0.38)',
+    'seriesShadowBlur' => 18,
+    'seriesShadowOffsetX' => 1,
+    'seriesShadowOffsetY' => 8,
 ];
 
-$fvnCircleGroups = [
-    ['name' => 'Kreis Düsseldorf', 'keywords' => ['duesseldorf']],
-    ['name' => 'Kreis Solingen', 'keywords' => ['solingen']],
-    ['name' => 'Kreis Wuppertal/Niederberg', 'keywords' => ['wuppertal', 'mettmann']],
-    ['name' => 'Kreis Mönchengladbach/Viersen', 'keywords' => ['moenchengladbach', 'viersen']],
-    ['name' => 'Kreis Grevenbroich/Neuss', 'keywords' => ['rhein-kreis neuss']],
-    ['name' => 'Kreis Kempen/Krefeld', 'keywords' => ['krefeld', 'viersen']],
-    ['name' => 'Kreis Moers', 'keywords' => ['wesel', 'moers']],
-    ['name' => 'Kreis Kleve/Geldern', 'keywords' => ['cleves', 'geldern']],
-    ['name' => 'Kreis Duisburg/Mülheim/Dinslaken', 'keywords' => ['duisburg', 'muelheim', 'wesel', 'dinslaken']],
-    ['name' => 'Kreis Oberhausen/Bottrop', 'keywords' => ['oberhausen', 'bottrop']],
-    ['name' => 'Kreis Rees/Bocholt', 'keywords' => ['borken', 'bocholt', 'rees']],
-    ['name' => 'Kreis Essen', 'keywords' => ['essen']],
-    ['name' => 'Kreis Remscheid', 'keywords' => ['remscheid']],
+$fvnCircleBase = [
+    ['name' => 'Düsseldorf', 'value' => 74, 'baseColor' => '#145243'],
+    ['name' => 'Duisburg / Mülheim / Dinslaken', 'value' => 70, 'baseColor' => '#2a6f57'],
+    ['name' => 'Oberhausen / Bottrop', 'value' => 58, 'baseColor' => '#2f8757'],
+    ['name' => 'Grevenbroich / Neuss', 'value' => 63, 'baseColor' => '#4c9554'],
+    ['name' => 'Kempen / Krefeld', 'value' => 57, 'baseColor' => '#4f9f70'],
+    ['name' => 'Moers', 'value' => 55, 'baseColor' => '#4d8d3e'],
+    ['name' => 'Kleve / Geldern', 'value' => 52, 'baseColor' => '#8bc95d'],
+    ['name' => 'Rees / Bocholt', 'value' => 50, 'baseColor' => '#6cc486'],
+    ['name' => 'Essen', 'value' => 62, 'baseColor' => '#8ecf77'],
+    ['name' => 'Wuppertal / Niederberg', 'value' => 66, 'baseColor' => '#82c9a4'],
+    ['name' => 'Solingen', 'value' => 61, 'baseColor' => '#a1d992'],
+    ['name' => 'Remscheid', 'value' => 53, 'baseColor' => '#9ee5bf'],
 ];
+
+$mixHex = static function (string $hex, string $targetHex, float $ratio): string {
+    $norm = static function (string $color): array {
+        $clean = ltrim(trim($color), '#');
+        if (strlen($clean) === 3) {
+            $clean = $clean[0] . $clean[0] . $clean[1] . $clean[1] . $clean[2] . $clean[2];
+        }
+        if (strlen($clean) !== 6) {
+            return [0, 0, 0];
+        }
+
+        return [
+            (int) hexdec(substr($clean, 0, 2)),
+            (int) hexdec(substr($clean, 2, 2)),
+            (int) hexdec(substr($clean, 4, 2)),
+        ];
+    };
+
+    $from = $norm($hex);
+    $target = $norm($targetHex);
+    $mix = max(0.0, min(1.0, $ratio));
+
+    $r = (int) round(($from[0] * (1.0 - $mix)) + ($target[0] * $mix));
+    $g = (int) round(($from[1] * (1.0 - $mix)) + ($target[1] * $mix));
+    $b = (int) round(($from[2] * (1.0 - $mix)) + ($target[2] * $mix));
+
+    return sprintf('#%02x%02x%02x', $r, $g, $b);
+};
+
+$gradient = static function (string $fromColor, string $toColor): array {
+    return [
+        'type' => 'linear',
+        'x' => 0,
+        'y' => 0,
+        'x2' => 1,
+        'y2' => 1,
+        'colorStops' => [
+            ['offset' => 0, 'color' => $fromColor],
+            ['offset' => 1, 'color' => $toColor],
+        ],
+        'global' => false,
+    ];
+};
+
+$fvnCircleRows = [];
+foreach ($fvnCircleBase as $entry) {
+    $baseColor = (string) ($entry['baseColor'] ?? '#2f8f50');
+    $gradStart = $mixHex($baseColor, '#ffffff', (float) $fvnVisualConfig['gradientLighten']);
+    $gradEnd = $mixHex($baseColor, '#00150d', (float) $fvnVisualConfig['gradientDarken']);
+
+    $hoverStart = $mixHex($baseColor, '#ffffff', (float) $fvnVisualConfig['hoverLighten']);
+    $hoverEnd = $mixHex($baseColor, '#03110b', (float) $fvnVisualConfig['hoverDarken']);
+
+    $areaColor = $fvnVisualConfig['useGradients']
+        ? $gradient($gradStart, $gradEnd)
+        : $baseColor;
+    $hoverAreaColor = $fvnVisualConfig['useGradients']
+        ? $gradient($hoverStart, $hoverEnd)
+        : $hoverStart;
+
+    $fvnCircleRows[] = [
+        'name' => $entry['name'],
+        'value' => $entry['value'],
+        'itemStyle' => ['areaColor' => $areaColor],
+        'emphasis' => [
+            'itemStyle' => [
+                'areaColor' => $hoverAreaColor,
+            ],
+        ],
+    ];
+}
+
+$fvnCirclePointGroups = [
+    ['name' => 'Düsseldorf', 'points' => [['coords' => [6.7763137, 51.2254018]], ['coords' => [6.9056079, 51.2209866]], ['coords' => [6.9777778, 51.2527778]], ['coords' => [6.8493503, 51.2973261]]]],
+    ['name' => 'Duisburg / Mülheim / Dinslaken', 'points' => [['coords' => [6.759562, 51.434999]], ['coords' => [6.8829192, 51.4272925]], ['coords' => [6.7345106, 51.5623618]], ['coords' => [6.6811994, 51.5975224]], ['coords' => [6.7660319, 51.6414581]]]],
+    ['name' => 'Oberhausen / Bottrop', 'points' => [['coords' => [6.8514435, 51.4696137]], ['coords' => [6.929204, 51.521581]]]],
+    ['name' => 'Grevenbroich / Neuss', 'points' => [['coords' => [6.6916476, 51.1981778]], ['coords' => [6.5848937, 51.0862467]], ['coords' => [6.8416158, 51.0934389]], ['coords' => [6.6760958, 51.2652237]], ['coords' => [6.6193924, 51.226675]], ['coords' => [6.5143539, 51.1902651]], ['coords' => [6.5036893, 51.1017138]], ['coords' => [6.6978814, 51.0633574]]]],
+    ['name' => 'Kempen / Krefeld', 'points' => [['coords' => [6.5623343, 51.3331205]], ['coords' => [6.4195011, 51.3642126]], ['coords' => [6.5446958, 51.2641433]], ['coords' => [6.45, 51.3167]], ['coords' => [6.2714171, 51.3155092]], ['coords' => [6.343738, 51.336077]], ['coords' => [6.3905476, 51.2562118]]]],
+    ['name' => 'Moers', 'points' => [['coords' => [6.62843, 51.451283]], ['coords' => [6.547923, 51.5017981]], ['coords' => [6.6014097, 51.5458979]], ['coords' => [6.5467641, 51.4413742]], ['coords' => [6.5128805, 51.5767474]], ['coords' => [6.3760442, 51.6094069]], ['coords' => [6.4543203, 51.661519]]]],
+    ['name' => 'Kleve / Geldern', 'points' => [['coords' => [6.1376008, 51.7895571]], ['coords' => [6.3228189, 51.5169736]], ['coords' => [6.2456273, 51.5802996]], ['coords' => [6.1593045, 51.6755765]], ['coords' => [6.2694388, 51.4439341]], ['coords' => [6.2428283, 51.8322137]], ['coords' => [6.2927546, 51.7388793]], ['coords' => [6.1932936, 51.7624802]], ['coords' => [6.0074359, 51.7895581]], ['coords' => [6.4245085, 51.5347321]], ['coords' => [6.3908707, 51.4533998]], ['coords' => [6.2011559, 51.6267298]], ['coords' => [6.2735726, 51.6686375]], ['coords' => [6.4690655, 51.4677722]]]],
+    ['name' => 'Rees / Bocholt', 'points' => [['coords' => [6.6148669, 51.8382715]], ['coords' => [6.696091, 51.8363135]], ['coords' => [6.4614134, 51.8344194]], ['coords' => [6.3956605, 51.7581242]], ['coords' => [6.590865, 51.7306922]], ['coords' => [6.617087, 51.6576909]], ['coords' => [6.8391929, 51.6898739]]]],
+    ['name' => 'Essen', 'points' => [['coords' => [7.0158171, 51.4582235]]]],
+    ['name' => 'Wuppertal / Niederberg', 'points' => [['coords' => [7.1780374, 51.264018]], ['coords' => [7.0439912, 51.3406713]], ['coords' => [6.9710401, 51.32658]], ['coords' => [7.0328063, 51.2818569]]]],
+    ['name' => 'Solingen', 'shrink' => 0.98, 'points' => [['coords' => [7.0845893, 51.1721629]], ['coords' => [7.0140304, 51.1059639]], ['coords' => [7.0085328, 51.1954956]]]],
+    ['name' => 'Remscheid', 'shrink' => 0.98, 'points' => [['coords' => [7.1943544, 51.1798706]], ['coords' => [7.3571392, 51.2029228]], ['coords' => [7.3413999, 51.1504872]]]],
+];
+
+$nrwMunicipalityGeoJson = (static function (): array {
+    $empty = ['type' => 'FeatureCollection', 'features' => []];
+
+    $geoJsonRaw = rex_file::get(rex_path::addon('echarts', 'assets/maps/de-nrw-gemeinden.geo.json'));
+    if (!is_string($geoJsonRaw) || $geoJsonRaw === '') {
+        return $empty;
+    }
+
+    try {
+        $municipalityGeoJson = json_decode($geoJsonRaw, true, 512, JSON_THROW_ON_ERROR);
+    } catch (Throwable) {
+        return $empty;
+    }
+
+    if (!is_array($municipalityGeoJson) || !isset($municipalityGeoJson['features']) || !is_array($municipalityGeoJson['features'])) {
+        return $empty;
+    }
+
+    return $municipalityGeoJson;
+})();
+
+$fvnMergedGeoJson = (static function (array $municipalityGeoJson, array $pointGroups): array {
+    $empty = ['type' => 'FeatureCollection', 'features' => []];
+
+    if (!isset($municipalityGeoJson['features']) || !is_array($municipalityGeoJson['features'])) {
+        return $empty;
+    }
+
+    $pointInRing = static function (float $x, float $y, array $ring): bool {
+        $inside = false;
+        $count = count($ring);
+        if ($count < 3) {
+            return false;
+        }
+
+        for ($i = 0, $j = $count - 1; $i < $count; $j = $i++) {
+            if (!is_array($ring[$i]) || !is_array($ring[$j]) || count($ring[$i]) < 2 || count($ring[$j]) < 2) {
+                continue;
+            }
+            $xi = (float) $ring[$i][0];
+            $yi = (float) $ring[$i][1];
+            $xj = (float) $ring[$j][0];
+            $yj = (float) $ring[$j][1];
+
+            $intersects = (($yi > $y) !== ($yj > $y))
+                && ($x < (($xj - $xi) * ($y - $yi) / (($yj - $yi) === 0.0 ? 1e-12 : ($yj - $yi)) + $xi));
+            if ($intersects) {
+                $inside = !$inside;
+            }
+        }
+
+        return $inside;
+    };
+
+    $pointInPolygon = static function (float $x, float $y, array $polygon) use ($pointInRing): bool {
+        if (!isset($polygon[0]) || !is_array($polygon[0])) {
+            return false;
+        }
+
+        if (!$pointInRing($x, $y, $polygon[0])) {
+            return false;
+        }
+
+        $holes = array_slice($polygon, 1);
+        foreach ($holes as $hole) {
+            if (is_array($hole) && $pointInRing($x, $y, $hole)) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    $pointInGeometry = static function (float $x, float $y, array $geometry) use ($pointInPolygon): bool {
+        if (!isset($geometry['type']) || !is_string($geometry['type']) || !isset($geometry['coordinates']) || !is_array($geometry['coordinates'])) {
+            return false;
+        }
+
+        if ($geometry['type'] === 'Polygon') {
+            return $pointInPolygon($x, $y, $geometry['coordinates']);
+        }
+
+        if ($geometry['type'] === 'MultiPolygon') {
+            foreach ($geometry['coordinates'] as $polygon) {
+                if (is_array($polygon) && $pointInPolygon($x, $y, $polygon)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    $extractPolygons = static function (array $geometry): array {
+        if (!isset($geometry['type']) || !is_string($geometry['type']) || !isset($geometry['coordinates']) || !is_array($geometry['coordinates'])) {
+            return [];
+        }
+
+        if ($geometry['type'] === 'Polygon') {
+            return [$geometry['coordinates']];
+        }
+
+        if ($geometry['type'] === 'MultiPolygon') {
+            return $geometry['coordinates'];
+        }
+
+        return [];
+    };
+
+    $centroidFromGeometry = static function (array $geometry): ?array {
+        if (!isset($geometry['coordinates']) || !is_array($geometry['coordinates'])) {
+            return null;
+        }
+
+        $lonSum = 0.0;
+        $latSum = 0.0;
+        $count = 0;
+
+        $collectRing = static function (array $ring) use (&$lonSum, &$latSum, &$count): void {
+            foreach ($ring as $point) {
+                if (!is_array($point) || count($point) < 2) {
+                    continue;
+                }
+                $lonSum += (float) $point[0];
+                $latSum += (float) $point[1];
+                ++$count;
+            }
+        };
+
+        if (($geometry['type'] ?? '') === 'Polygon') {
+            if (isset($geometry['coordinates'][0]) && is_array($geometry['coordinates'][0])) {
+                $collectRing($geometry['coordinates'][0]);
+            }
+        } elseif (($geometry['type'] ?? '') === 'MultiPolygon') {
+            foreach ($geometry['coordinates'] as $polygon) {
+                if (is_array($polygon) && isset($polygon[0]) && is_array($polygon[0])) {
+                    $collectRing($polygon[0]);
+                }
+            }
+        }
+
+        if ($count === 0) {
+            return null;
+        }
+
+        return [$lonSum / $count, $latSum / $count];
+    };
+
+    $groupPolygons = [];
+    $groupCenters = [];
+    foreach ($pointGroups as $group) {
+        if (!is_array($group) || !isset($group['name']) || !is_string($group['name'])) {
+            continue;
+        }
+        $groupPolygons[$group['name']] = [];
+
+        if (isset($group['points']) && is_array($group['points'])) {
+            $lonSum = 0.0;
+            $latSum = 0.0;
+            $count = 0;
+            foreach ($group['points'] as $point) {
+                if (!is_array($point) || !isset($point['coords']) || !is_array($point['coords']) || count($point['coords']) < 2) {
+                    continue;
+                }
+                $lonSum += (float) $point['coords'][0];
+                $latSum += (float) $point['coords'][1];
+                ++$count;
+            }
+            if ($count > 0) {
+                $groupCenters[$group['name']] = [$lonSum / $count, $latSum / $count];
+            }
+        }
+    }
+
+    if ($groupPolygons === []) {
+        return $empty;
+    }
+
+    $assignedMunicipalityIndexes = [];
+    foreach ($pointGroups as $group) {
+        if (!is_array($group) || !isset($group['name']) || !is_string($group['name']) || !isset($group['points']) || !is_array($group['points'])) {
+            continue;
+        }
+
+        $groupName = $group['name'];
+        $matchedMunicipalityIndexes = [];
+
+        foreach ($group['points'] as $point) {
+            if (!is_array($point) || !isset($point['coords']) || !is_array($point['coords']) || count($point['coords']) < 2) {
+                continue;
+            }
+
+            $lon = (float) $point['coords'][0];
+            $lat = (float) $point['coords'][1];
+
+            foreach ($municipalityGeoJson['features'] as $featureIndex => $feature) {
+                if (isset($matchedMunicipalityIndexes[$featureIndex])) {
+                    continue;
+                }
+
+                if (!is_array($feature) || !isset($feature['geometry']) || !is_array($feature['geometry'])) {
+                    continue;
+                }
+
+                if ($pointInGeometry($lon, $lat, $feature['geometry'])) {
+                    $matchedMunicipalityIndexes[$featureIndex] = true;
+                    $assignedMunicipalityIndexes[$featureIndex] = true;
+                }
+            }
+        }
+
+        foreach (array_keys($matchedMunicipalityIndexes) as $featureIndex) {
+            $feature = $municipalityGeoJson['features'][$featureIndex] ?? null;
+            if (!is_array($feature) || !isset($feature['geometry']) || !is_array($feature['geometry'])) {
+                continue;
+            }
+
+            $polygons = $extractPolygons($feature['geometry']);
+            foreach ($polygons as $polygon) {
+                if (is_array($polygon) && isset($polygon[0]) && is_array($polygon[0]) && $polygon[0] !== []) {
+                    $groupPolygons[$groupName][] = [$polygon[0]];
+                }
+            }
+        }
+    }
+
+    // Fallback: fehlende Gemeinden nur in der Naehe eines Kreiszentrums zuordnen.
+    // So vermeiden wir, dass entfernte Ost-NRW-Flaechen in einen FVN-Kreis rutschen.
+    $maxFallbackDistanceSquared = 0.05;
+
+    foreach ($municipalityGeoJson['features'] as $featureIndex => $feature) {
+        if (isset($assignedMunicipalityIndexes[$featureIndex])) {
+            continue;
+        }
+
+        if (!is_array($feature) || !isset($feature['geometry']) || !is_array($feature['geometry'])) {
+            continue;
+        }
+
+        $centroid = $centroidFromGeometry($feature['geometry']);
+        if ($centroid === null) {
+            continue;
+        }
+
+        $bestGroupName = null;
+        $bestDistance = INF;
+        foreach ($groupCenters as $groupName => $center) {
+            $dx = $centroid[0] - $center[0];
+            $dy = $centroid[1] - $center[1];
+            $distance = ($dx * $dx) + ($dy * $dy);
+            if ($distance < $bestDistance) {
+                $bestDistance = $distance;
+                $bestGroupName = $groupName;
+            }
+        }
+
+        if ($bestGroupName === null || !isset($groupPolygons[$bestGroupName])) {
+            continue;
+        }
+
+        if ($bestDistance > $maxFallbackDistanceSquared) {
+            continue;
+        }
+
+        $polygons = $extractPolygons($feature['geometry']);
+        foreach ($polygons as $polygon) {
+            if (is_array($polygon) && isset($polygon[0]) && is_array($polygon[0]) && $polygon[0] !== []) {
+                $groupPolygons[$bestGroupName][] = [$polygon[0]];
+            }
+        }
+    }
+
+    $features = [];
+    foreach ($pointGroups as $group) {
+        if (!is_array($group) || !isset($group['name']) || !is_string($group['name'])) {
+            continue;
+        }
+
+        $groupName = $group['name'];
+        if (!isset($groupPolygons[$groupName]) || $groupPolygons[$groupName] === []) {
+            continue;
+        }
+
+        $features[] = [
+            'type' => 'Feature',
+            'properties' => ['name' => $groupName],
+            'geometry' => [
+                'type' => 'MultiPolygon',
+                'coordinates' => $groupPolygons[$groupName],
+            ],
+        ];
+    }
+
+    return [
+        'type' => 'FeatureCollection',
+        'features' => $features,
+    ];
+})($nrwMunicipalityGeoJson, $fvnCirclePointGroups);
+
+$fvnCircleMetaByName = [];
+foreach ($fvnCircleRows as $row) {
+    if (!is_array($row) || !isset($row['name']) || !is_string($row['name'])) {
+        continue;
+    }
+
+    $fvnCircleMetaByName[$row['name']] = [
+        'value' => isset($row['value']) ? (int) $row['value'] : 0,
+    ];
+}
+
+$fvnLabelLineData = [];
+$fvnLabelPointData = [];
+$fvnContourShadowGeoJson = ['type' => 'FeatureCollection', 'features' => []];
+
+$fvnCentroidByName = (static function (array $merged): array {
+    $result = [];
+
+    foreach ($merged['features'] ?? [] as $feature) {
+        if (!is_array($feature) || !isset($feature['properties']['name']) || !is_string($feature['properties']['name'])) {
+            continue;
+        }
+
+        $name = $feature['properties']['name'];
+        $geometry = $feature['geometry'] ?? null;
+        if (!is_array($geometry) || !isset($geometry['type']) || !isset($geometry['coordinates']) || !is_array($geometry['coordinates'])) {
+            continue;
+        }
+
+        $lonSum = 0.0;
+        $latSum = 0.0;
+        $count = 0;
+
+        $collectRing = static function (array $ring) use (&$lonSum, &$latSum, &$count): void {
+            foreach ($ring as $point) {
+                if (!is_array($point) || count($point) < 2) {
+                    continue;
+                }
+                $lonSum += (float) $point[0];
+                $latSum += (float) $point[1];
+                ++$count;
+            }
+        };
+
+        if ($geometry['type'] === 'Polygon') {
+            if (isset($geometry['coordinates'][0]) && is_array($geometry['coordinates'][0])) {
+                $collectRing($geometry['coordinates'][0]);
+            }
+        } elseif ($geometry['type'] === 'MultiPolygon') {
+            foreach ($geometry['coordinates'] as $polygon) {
+                if (is_array($polygon) && isset($polygon[0]) && is_array($polygon[0])) {
+                    $collectRing($polygon[0]);
+                }
+            }
+        }
+
+        if ($count === 0) {
+            continue;
+        }
+
+        $result[$name] = [
+            'lon' => $lonSum / $count,
+            'lat' => $latSum / $count,
+        ];
+    }
+
+    return $result;
+})($fvnMergedGeoJson);
+
+if ($fvnCentroidByName !== []) {
+    $fvnLabelPlacements = [
+        'Rees / Bocholt' => ['labelLon' => 6.63, 'labelLat' => 51.86, 'position' => 'inside'],
+        'Kleve / Geldern' => ['labelLon' => 6.20, 'labelLat' => 51.68, 'position' => 'inside'],
+        'Kempen / Krefeld' => ['labelLon' => 6.37, 'labelLat' => 51.19, 'position' => 'inside'],
+        'Grevenbroich / Neuss' => ['labelLon' => 6.67, 'labelLat' => 50.99, 'position' => 'inside'],
+        'Moers' => ['labelLon' => 6.57, 'labelLat' => 51.57, 'position' => 'inside'],
+        'Oberhausen / Bottrop' => ['labelLon' => 7.00, 'labelLat' => 51.52, 'position' => 'inside'],
+        'Duisburg / Mülheim / Dinslaken' => ['labelLon' => 6.84, 'labelLat' => 51.40, 'position' => 'inside'],
+        'Essen' => ['labelLon' => 7.30, 'labelLat' => 51.42, 'position' => 'inside'],
+        'Wuppertal / Niederberg' => ['labelLon' => 7.18, 'labelLat' => 51.18, 'position' => 'inside'],
+        'Remscheid' => ['labelLon' => 7.31, 'labelLat' => 51.02, 'position' => 'inside'],
+        'Düsseldorf' => ['labelLon' => 6.86, 'labelLat' => 51.16, 'position' => 'inside'],
+        'Solingen' => ['labelLon' => 7.08, 'labelLat' => 50.88, 'position' => 'inside'],
+    ];
+
+    foreach ($fvnCentroidByName as $name => $center) {
+        $placed = $fvnLabelPlacements[$name] ?? [
+            'labelLon' => (float) $center['lon'],
+            'labelLat' => (float) $center['lat'],
+            'position' => 'inside',
+        ];
+
+        $value = $fvnCircleMetaByName[$name]['value'] ?? 0;
+        $fvnLabelPointData[] = [
+            'name' => $name,
+            'value' => [$placed['labelLon'], $placed['labelLat'], $value],
+            'label' => [
+                'position' => $placed['position'],
+            ],
+        ];
+    }
+}
+
+if (($fvnMergedGeoJson['features'] ?? []) !== []) {
+    $allPolygons = [];
+    foreach ($fvnMergedGeoJson['features'] as $feature) {
+        if (!is_array($feature) || !isset($feature['geometry']['type']) || !isset($feature['geometry']['coordinates']) || !is_array($feature['geometry']['coordinates'])) {
+            continue;
+        }
+
+        if ($feature['geometry']['type'] === 'Polygon') {
+            $allPolygons[] = $feature['geometry']['coordinates'];
+            continue;
+        }
+
+        if ($feature['geometry']['type'] === 'MultiPolygon') {
+            foreach ($feature['geometry']['coordinates'] as $polygon) {
+                if (is_array($polygon)) {
+                    $allPolygons[] = $polygon;
+                }
+            }
+        }
+    }
+
+    if ($allPolygons !== []) {
+        $fvnContourShadowGeoJson = [
+            'type' => 'FeatureCollection',
+            'features' => [[
+                'type' => 'Feature',
+                'properties' => ['name' => 'FVN-Kontur'],
+                'geometry' => [
+                    'type' => 'MultiPolygon',
+                    'coordinates' => $allPolygons,
+                ],
+            ]],
+        ];
+    }
+}
 
 $rainOptions = [
     'title' => ['text' => rex_i18n::msg('echarts_demo_rain_chart_title')],
@@ -454,9 +962,21 @@ $series = [
     ['name' => 'Produkt B', 'values' => [90, 110, 126, 149, 171, 188], 'area' => true],
     ['name' => 'Produkt C', 'values' => [74, 98, 120, 138, 160, 172]],
 ];
-$options = PresetFactory::multiLine($months, $series, 'Produktvergleich');
+
+$options = PresetFactory::multiLine(
+    $months,
+    $series,
+    'Quartalsvergleich',
+    true,
+    ['#1f77b4', '#2ca02c', '#ff7f0e'],
+    true,
+    false,
+    true
+);
+
 echo ChartRenderer::render($options, 340);
 PHP;
+
 $renderExample(
     rex_i18n::msg('echarts_demo_example_compare_lines_title'),
     rex_i18n::msg('echarts_demo_example_compare_lines_desc'),
@@ -525,49 +1045,141 @@ $renderExample(
     360
 );
 
-$lineRaceApacheOptions = PresetFactory::lineRace(
-    $lineRaceApacheYears,
-    $lineRaceApacheFrames,
-    rex_i18n::msg('echarts_demo_line_race_apache_chart_title'),
-    true,
-    ['#3d5a80', '#457b9d', '#2a9d8f', '#e76f51'],
-    true,
-    true,
-    1000,
-    true,
-    true,
-    false
-);
-$lineRaceApacheCode = <<<'PHP'
-<?php
-use FriendsOfREDAXO\ECharts\ChartRenderer;
-use FriendsOfREDAXO\ECharts\PresetFactory;
+$lineRaceApacheDatasetWithFilters = [];
+$lineRaceApacheSeriesList = [];
+foreach ($lineRaceApacheCountries as $countryName) {
+    $datasetId = 'dataset_' . str_replace(' ', '_', strtolower($countryName));
+    $lineRaceApacheDatasetWithFilters[] = [
+        'id' => $datasetId,
+        'fromDatasetId' => 'dataset_raw',
+        'transform' => [
+            'type' => 'filter',
+            'config' => [
+                'and' => [
+                    ['dimension' => 'Year', 'gte' => 1950],
+                    ['dimension' => 'Country', '=' => $countryName],
+                ],
+            ],
+        ],
+    ];
 
-$years = ['2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
-$frames = [
-    [
-        'name' => 'Jan',
-        'series' => [
-            ['name' => 'Beijing', 'values' => [62, 64, 67, 69, 73, 78, 82, 85, 88]],
-            ['name' => 'Shanghai', 'values' => [54, 58, 60, 63, 67, 71, 75, 80, 84]],
-            ['name' => 'Guangzhou', 'values' => [45, 47, 50, 53, 56, 60, 63, 66, 70]],
-            ['name' => 'Shenzhen', 'values' => [40, 44, 48, 52, 58, 63, 69, 74, 81]],
+    $lineRaceApacheSeriesList[] = [
+        'type' => 'line',
+        'datasetId' => $datasetId,
+        'showSymbol' => false,
+        'name' => $countryName,
+        'endLabel' => [
+            'show' => true,
+            'formatter' => '{@[3]}: {@[0]}',
         ],
+        'labelLayout' => ['moveOverlap' => 'shiftY'],
+        'emphasis' => ['focus' => 'series'],
+        'encode' => [
+            'x' => 'Year',
+            'y' => 'Income',
+            'label' => ['Country', 'Income'],
+            'itemName' => 'Year',
+            'tooltip' => ['Income'],
+        ],
+    ];
+}
+
+$lineRaceApacheOptions = [
+    'animationDuration' => 10000,
+    'dataset' => array_merge(
+        [[
+            'id' => 'dataset_raw',
+            'source' => $lineRaceApacheRawData,
+        ]],
+        $lineRaceApacheDatasetWithFilters
+    ),
+    'title' => [
+        'text' => rex_i18n::msg('echarts_demo_line_race_apache_chart_title'),
     ],
-    [
-        'name' => 'Jul',
-        'series' => [
-            ['name' => 'Beijing', 'values' => [69, 71, 74, 76, 79, 83, 87, 91, 95]],
-            ['name' => 'Shanghai', 'values' => [60, 64, 67, 70, 74, 78, 82, 87, 91]],
-            ['name' => 'Guangzhou', 'values' => [49, 52, 56, 59, 63, 66, 70, 73, 77]],
-            ['name' => 'Shenzhen', 'values' => [46, 51, 56, 61, 67, 72, 78, 85, 93]],
-        ],
+    'tooltip' => [
+        'order' => 'valueDesc',
+        'trigger' => 'axis',
+    ],
+    'xAxis' => [
+        'type' => 'category',
+        'nameLocation' => 'middle',
+    ],
+    'yAxis' => [
+        'name' => 'Income',
+    ],
+    'grid' => ['right' => 140],
+    'series' => $lineRaceApacheSeriesList,
+    '_echartsAddon' => [
+        'startInViewport' => true,
     ],
 ];
 
+$lineRaceApacheOptions = PresetFactory::withExportToolbox($lineRaceApacheOptions, true, true, true, 'line-race-apache-dataset');
+$lineRaceApacheCode = <<<'PHP'
+<?php
+use FriendsOfREDAXO\ECharts\ChartRenderer;
+
+$countries = ['Finland', 'France', 'Germany', 'Iceland', 'Norway', 'Poland', 'Russia', 'United Kingdom'];
+
+$rawData = [
+    ['Income', 'LifeExpectancy', 'Population', 'Country', 'Year'],
+    [5600, 62, 2000000, 'Finland', 1950],
+    [9200, 64, 2120000, 'Finland', 1960],
+    // ... weitere Zeilen je Land/Jahr
+];
+
+$datasetWithFilters = [];
+$seriesList = [];
+foreach ($countries as $country) {
+    $datasetId = 'dataset_' . strtolower(str_replace(' ', '_', $country));
+
+    $datasetWithFilters[] = [
+        'id' => $datasetId,
+        'fromDatasetId' => 'dataset_raw',
+        'transform' => [
+            'type' => 'filter',
+            'config' => [
+                'and' => [
+                    ['dimension' => 'Year', 'gte' => 1950],
+                    ['dimension' => 'Country', '=' => $country],
+                ],
+            ],
+        ],
+    ];
+
+    $seriesList[] = [
+        'type' => 'line',
+        'datasetId' => $datasetId,
+        'showSymbol' => false,
+        'name' => $country,
+        'endLabel' => ['show' => true, 'formatter' => '{@[3]}: {@[0]}'],
+        'labelLayout' => ['moveOverlap' => 'shiftY'],
+        'emphasis' => ['focus' => 'series'],
+        'encode' => [
+            'x' => 'Year',
+            'y' => 'Income',
+            'label' => ['Country', 'Income'],
+            'itemName' => 'Year',
+            'tooltip' => ['Income'],
+        ],
+    ];
+}
+
 // Inspiration: https://echarts.apache.org/examples/en/editor.html?c=line-race
 // Neu: Start erst, wenn der Chart im Viewport sichtbar ist.
-$options = PresetFactory::lineRace($years, $frames, 'Line Race (Apache-style)', true, [], true, true, 1000, true, true, false);
+$options = [
+    'animationDuration' => 10000,
+    'dataset' => array_merge([
+        ['id' => 'dataset_raw', 'source' => $rawData],
+    ], $datasetWithFilters),
+    'title' => ['text' => 'Line Race (Apache-style)'],
+    'tooltip' => ['order' => 'valueDesc', 'trigger' => 'axis'],
+    'xAxis' => ['type' => 'category', 'nameLocation' => 'middle'],
+    'yAxis' => ['name' => 'Income'],
+    'grid' => ['right' => 140],
+    'series' => $seriesList,
+    '_echartsAddon' => ['startInViewport' => true],
+];
 echo ChartRenderer::render($options, 380);
 PHP;
 $renderExample(
@@ -887,65 +1499,285 @@ echo '</div>';
 echo '</div>';
 
 $fvnOptions = [
-        'title' => ['text' => rex_i18n::msg('echarts_demo_fvn_chart_title')],
-        'tooltip' => ['trigger' => 'item'],
-        'visualMap' => [
-                'min' => 45,
-                'max' => 80,
-                'left' => 10,
-                'bottom' => 10,
-                'text' => [rex_i18n::msg('echarts_demo_geo_high'), rex_i18n::msg('echarts_demo_geo_low')],
-                'calculable' => true,
+    'title' => ['text' => rex_i18n::msg('echarts_demo_fvn_chart_title')],
+    'tooltip' => [
+        'trigger' => 'item',
+        'formatter' => '{b}<br/>Anzahl Vereine: {c}',
+    ],
+    '_echartsAddon' => [
+        'labelHoverSync' => [
+            'mapSeriesName' => rex_i18n::msg('echarts_demo_fvn_series_title'),
+            'labelSeriesName' => 'FVN Innenlabels',
         ],
-        'series' => [[
-                'name' => rex_i18n::msg('echarts_demo_fvn_series_title'),
-                'type' => 'map',
-                'map' => 'de_fvn_kreise',
+    ],
+    'geo' => [
+        'map' => 'de_fvn_kreise_php_merge',
+        'roam' => false,
+        'silent' => true,
+        'layoutCenter' => ['46.5%', '53%'],
+        'layoutSize' => '87%',
+        'itemStyle' => [
+            'areaColor' => 'transparent',
+            'borderColor' => 'transparent',
+        ],
+        'label' => ['show' => false],
+        'emphasis' => [
+            'disabled' => true,
+        ],
+    ],
+    'series' => [
+        [
+            'name' => 'FVN-Kontur-Schatten',
+            'type' => 'map',
+            'map' => 'de_fvn_kontur_shadow',
+            'layoutCenter' => ['46.5%', '53%'],
+            'layoutSize' => '87%',
+            'silent' => true,
+            'tooltip' => ['show' => false],
+            'label' => ['show' => false],
+            'zlevel' => 1,
+            'z' => 1,
+            'itemStyle' => [
+                'areaColor' => 'rgba(255, 255, 255, 0)',
+                'borderColor' => 'transparent',
+                'borderWidth' => 0,
+                'shadowColor' => 'rgba(0, 0, 0, 0.18)',
+                'shadowBlur' => 24,
+                'shadowOffsetX' => 0,
+                'shadowOffsetY' => 10,
+            ],
+            'data' => [['name' => 'FVN-Kontur', 'value' => 1]],
+        ],
+        [
+            'name' => rex_i18n::msg('echarts_demo_fvn_series_title'),
+            'type' => 'map',
+            'map' => 'de_fvn_kreise_php_merge',
+            'layoutCenter' => ['46.5%', '53%'],
+            'layoutSize' => '87%',
+            'zlevel' => 2,
+            'z' => 3,
+            'animation' => true,
+            'animationDurationUpdate' => 320,
+            'animationEasingUpdate' => 'cubicOut',
+            'label' => ['show' => false],
+            'itemStyle' => [
+                'borderColor' => 'rgba(18, 54, 41, 0.42)',
+                'borderWidth' => 0.9,
+            ],
+            'emphasis' => [
+                'scale' => (bool) $fvnVisualConfig['hoverZoom'],
+                'scaleSize' => 8,
+                'focus' => 'self',
+                'blurScope' => 'coordinateSystem',
                 'label' => ['show' => false],
-                'emphasis' => ['label' => ['show' => true, 'fontSize' => 10]],
-                'data' => $fvnCircleRows,
-        ]],
+                'itemStyle' => [
+                    'borderColor' => 'rgba(14, 44, 33, 0.55)',
+                    'borderWidth' => 1.1,
+                    'shadowColor' => 'rgba(0, 0, 0, 0.26)',
+                    'shadowBlur' => 18,
+                    'shadowOffsetX' => 0,
+                    'shadowOffsetY' => 7,
+                ],
+            ],
+            'blur' => [
+                'itemStyle' => [
+                    'opacity' => 0.86,
+                ],
+                'label' => [
+                    'opacity' => 0.68,
+                ],
+            ],
+            'data' => $fvnCircleRows,
+        ],
+        [
+            'name' => 'FVN Innenlabels',
+            'type' => 'scatter',
+            'coordinateSystem' => 'geo',
+            'geoIndex' => 0,
+            'zlevel' => 3,
+            'z' => 4,
+            'silent' => true,
+            'tooltip' => ['show' => false],
+            'symbolSize' => 1,
+            'itemStyle' => ['color' => 'transparent'],
+            'label' => [
+                'show' => true,
+                'position' => 'inside',
+                'color' => '#ffffff',
+                'fontSize' => 8,
+                'fontWeight' => '600',
+                'backgroundColor' => 'rgba(0, 0, 0, 0.72)',
+                'padding' => [1, 5],
+                'borderRadius' => 5,
+                'formatter' => '{b}',
+            ],
+            'emphasis' => [
+                'disabled' => false,
+                'label' => [
+                    'show' => true,
+                    'color' => '#ffffff',
+                    'fontSize' => 11,
+                    'fontWeight' => '600',
+                    'backgroundColor' => 'rgba(0, 0, 0, 0.88)',
+                    'padding' => [3, 7],
+                ],
+            ],
+            'data' => $fvnLabelPointData,
+        ],
+    ],
 ];
 $fvnOptionsJson = json_encode($fvnOptions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 $fvnOptionsBase64 = is_string($fvnOptionsJson) && $fvnOptionsJson !== '' ? base64_encode($fvnOptionsJson) : '';
-$fvnGroupsJson = json_encode($fvnCircleGroups, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-$fvnGroupsBase64 = is_string($fvnGroupsJson) && $fvnGroupsJson !== '' ? base64_encode($fvnGroupsJson) : '';
+$fvnMergedGeoJsonJson = json_encode($fvnMergedGeoJson, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$fvnMergedGeoJsonBase64 = is_string($fvnMergedGeoJsonJson) && $fvnMergedGeoJsonJson !== '' ? base64_encode($fvnMergedGeoJsonJson) : '';
+$fvnContourShadowGeoJsonJson = json_encode($fvnContourShadowGeoJson, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$fvnContourShadowGeoJsonBase64 = is_string($fvnContourShadowGeoJsonJson) && $fvnContourShadowGeoJsonJson !== '' ? base64_encode($fvnContourShadowGeoJsonJson) : '';
+$fvnExtraMaps = [['name' => 'de_fvn_kontur_shadow', 'geoJson' => $fvnContourShadowGeoJson]];
+$fvnExtraMapsJson = json_encode($fvnExtraMaps, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$fvnExtraMapsBase64 = is_string($fvnExtraMapsJson) && $fvnExtraMapsJson !== '' ? base64_encode($fvnExtraMapsJson) : '';
 $fvnCode = <<<'PHP'
 <?php
-// FVN-Kreise ueber Gruppenlogik aus NRW-Kreisgeometrien ableiten.
-// Jede Gruppe bekommt eine Keyword-Liste aus Orten/Kreisnamen.
+// Gemeinden per PHP je FVN-Kreis zusammenfassen (eine Feature-Fläche pro Kreis).
 
-$groups = [
-    ['name' => 'Kreis Düsseldorf', 'keywords' => ['duesseldorf']],
-    ['name' => 'Kreis Solingen', 'keywords' => ['solingen']],
-    ['name' => 'Kreis Wuppertal/Niederberg', 'keywords' => ['wuppertal', 'mettmann']],
-    // ... weitere FVN-Kreise
-];
+// $mergedGeoJson entsteht in PHP (Dissolve nach Kreisname).
+// Farben, Verlaeufe, Hover-Zoom und zentrierte Labels sind zentral in $fvnVisualConfig steuerbar.
 
 $options = [
-    'series' => [[
-        'type' => 'map',
-        'map' => 'de_fvn_kreise',
-        'data' => [
-            ['name' => 'Kreis Düsseldorf', 'value' => 74],
-            ['name' => 'Kreis Solingen', 'value' => 61],
+    'tooltip' => [
+        'trigger' => 'item',
+        'formatter' => '{b}<br/>Anzahl Vereine: {c}',
+    ],
+    'series' => [
+        [
+            'type' => 'map',
+            'map' => 'de_fvn_kreise_php_merge',
+            'animationDurationUpdate' => 320,
+            'animationEasingUpdate' => 'cubicOut',
+            'label' => [
+                'show' => true,
+                'position' => 'inside',
+                'color' => '#fff',
+                'fontSize' => 8,
+                'backgroundColor' => 'rgba(0,0,0,0.72)',
+                'padding' => [1, 5],
+                'borderRadius' => 5,
+                'formatter' => '{b}',
+            ],
+            'itemStyle' => [
+                'borderWidth' => 0,
+                'borderColor' => 'rgba(18, 54, 41, 0.42)',
+                'borderWidth' => 0.9,
+            ],
+            'emphasis' => [
+                'scale' => true,
+                'scaleSize' => 8,
+                'focus' => 'self',
+                'label' => [
+                    'show' => true,
+                    'fontSize' => 11,
+                    'backgroundColor' => 'rgba(0,0,0,0.88)',
+                    'padding' => [3, 7],
+                ],
+            ],
+            'data' => [
+                [
+                    'name' => 'Düsseldorf',
+                    'value' => 74,
+                    'itemStyle' => [
+                        'areaColor' => [
+                            'type' => 'linear',
+                            'x' => 0,
+                            'y' => 0,
+                            'x2' => 1,
+                            'y2' => 1,
+                            'colorStops' => [
+                                ['offset' => 0, 'color' => '#2d7359'],
+                                ['offset' => 1, 'color' => '#0b3d2e'],
+                            ],
+                        ],
+                    ],
+                    'emphasis' => [
+                        'itemStyle' => [
+                            'areaColor' => [
+                                'type' => 'linear',
+                                'x' => 0,
+                                'y' => 0,
+                                'x2' => 1,
+                                'y2' => 1,
+                                'colorStops' => [
+                                    ['offset' => 0, 'color' => '#6db89a'],
+                                    ['offset' => 1, 'color' => '#14553f'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'name' => 'Solingen',
+                    'value' => 61,
+                    'itemStyle' => [
+                        'areaColor' => [
+                            'type' => 'linear',
+                            'x' => 0,
+                            'y' => 0,
+                            'x2' => 1,
+                            'y2' => 1,
+                            'colorStops' => [
+                                ['offset' => 0, 'color' => '#8ed5a8'],
+                                ['offset' => 1, 'color' => '#2f8f50'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ],
-    ]],
+        [
+            'type' => 'lines',
+            'coordinateSystem' => 'geo',
+            'polyline' => true,
+            'lineStyle' => [
+                'color' => 'rgba(124, 190, 226, 0.9)',
+                'width' => 7,
+            ],
+            'data' => [[
+                'coords' => [
+                    [6.393, 51.771],
+                    [6.430, 51.726],
+                    [6.474, 51.659],
+                    [6.552, 51.657],
+                    [6.620, 51.659],
+                    [6.667, 51.628],
+                    [6.688, 51.596],
+                    [6.709, 51.579],
+                    [6.734, 51.561],
+                    [6.741, 51.520],
+                    [6.730, 51.454],
+                    [6.690, 51.410],
+                    [6.647, 51.351],
+                    [6.680, 51.329],
+                    [6.723, 51.299],
+                    [6.746, 51.259],
+                    [6.772, 51.227],
+                    [6.750, 51.212],
+                    [6.708, 51.198],
+                    [6.734, 51.165],
+                    [6.815, 51.120],
+                    [6.862, 51.101],
+                    [6.894, 51.091],
+                ],
+            ]],
+        ],
+    ],
 ];
 
 $optionsBase64 = base64_encode((string) json_encode($options, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-$groupsBase64 = base64_encode((string) json_encode($groups, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+$geoJsonBase64 = base64_encode((string) json_encode($mergedGeoJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
 echo '<div class="js-echarts-geo-map"'
-    . ' data-map-name="de_fvn_kreise"'
-    . ' data-map-geojson-url="' . rex_addon::get('echarts')->getAssetsUrl('maps/de-kreise.geo.json') . '"'
-    . ' data-map-filter-prop="NAME_1"'
-    . ' data-map-filter-value="Nordrhein-Westfalen"'
-    . ' data-map-groups="' . $groupsBase64 . '"'
-    . ' data-map-group-source-prop="NAME_3"'
-    . ' data-map-groups-drop-unmatched="1"'
+    . ' data-map-name="de_fvn_kreise_php_merge"'
+    . ' data-map-geojson="' . $geoJsonBase64 . '"'
     . ' data-map-options="' . $optionsBase64 . '"'
-    . ' style="height:520px"'
+    . ' style="height:620px"'
     . '></div>';
 PHP;
 
@@ -954,10 +1786,10 @@ echo '<div class="panel-heading"><h3 class="panel-title">' . rex_i18n::msg('echa
 echo '<div class="panel-body">';
 echo '<p class="text-muted" style="margin-bottom:14px">' . rex_i18n::msg('echarts_demo_example_fvn_desc') . '</p>';
 echo '<div class="row">';
-echo '<div class="col-md-7">';
-echo '<div class="js-echarts-geo-map" style="height:520px" data-map-name="de_fvn_kreise" data-map-geojson-url="' . rex_escape($districtMapAssetUrl) . '" data-map-filter-prop="NAME_1" data-map-filter-value="Nordrhein-Westfalen" data-map-groups="' . rex_escape($fvnGroupsBase64) . '" data-map-group-source-prop="NAME_3" data-map-groups-drop-unmatched="1" data-map-options="' . rex_escape($fvnOptionsBase64) . '"></div>';
+echo '<div class="col-md-8">';
+echo '<div class="js-echarts-geo-map" style="height:620px" data-map-name="de_fvn_kreise_php_merge" data-map-geojson="' . rex_escape($fvnMergedGeoJsonBase64) . '" data-map-extra-maps="' . rex_escape($fvnExtraMapsBase64) . '" data-map-options="' . rex_escape($fvnOptionsBase64) . '"></div>';
 echo '</div>';
-echo '<div class="col-md-5">';
+echo '<div class="col-md-4">';
 echo '<div class="help-block" style="margin-top:0">' . rex_i18n::msg('echarts_demo_copy_hint') . '</div>';
 echo '<pre style="font-size:12px;max-height:360px;overflow:auto">' . rex_escape($fvnCode) . '</pre>';
 echo '</div>';

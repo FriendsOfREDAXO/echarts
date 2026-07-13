@@ -533,7 +533,7 @@
   }
 
   function initChartElement(element) {
-    if (!element || element.dataset.echartsInitialized === '1') {
+    if (!element || element.dataset.echartsInitialized === '1' || element.dataset.echartsInitialized === 'pending') {
       return;
     }
 
@@ -562,9 +562,39 @@
 
     var chart = window.echarts.init(element, null, initOpts);
     applyAddonToolboxFeatures(options, chart);
-    chart.setOption(options);
-    applyTimelineViewportStart(chart, options, addonMeta, element);
-    element.dataset.echartsInitialized = '1';
+
+    var renderChart = function () {
+      chart.setOption(options);
+      applyTimelineViewportStart(chart, options, addonMeta, element);
+      element.dataset.echartsInitialized = '1';
+    };
+
+    var startInViewport = addonMeta && addonMeta.startInViewport === true;
+    if (startInViewport) {
+      element.dataset.echartsInitialized = 'pending';
+
+      if (typeof IntersectionObserver === 'undefined') {
+        renderChart();
+      } else {
+        var observer = new IntersectionObserver(function (entries) {
+          for (var i = 0; i < entries.length; i += 1) {
+            var entry = entries[i];
+            if (entry.target === element && entry.isIntersecting) {
+              observer.unobserve(element);
+              renderChart();
+              break;
+            }
+          }
+        }, {
+          root: null,
+          threshold: 0.35
+        });
+
+        observer.observe(element);
+      }
+    } else {
+      renderChart();
+    }
 
     chart.on('click', function (params) {
       var link = '';

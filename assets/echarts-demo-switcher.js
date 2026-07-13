@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function decodeOptions(encoded) {
+  function decodeOptionsMap(encoded) {
     if (!encoded) {
       return null;
     }
@@ -26,128 +26,58 @@
     }
   }
 
-  function pickTooltipFromParams(params) {
-    if (!params) {
-      return '';
+  function cloneOptions(options) {
+    if (!options || typeof options !== 'object') {
+      return null;
     }
 
-    if (Array.isArray(params)) {
-      if (params.length === 0) {
-        return '';
-      }
-
-      var referenceIndex = typeof params[0].dataIndex === 'number' ? params[0].dataIndex : null;
-      if (referenceIndex === null) {
-        return '';
-      }
-
-      for (var i = 0; i < params.length; i += 1) {
-        var item = params[i];
-
-        if (!item || !item.data || typeof item.data !== 'object') {
-          continue;
-        }
-
-        if (typeof item.dataIndex === 'number' && item.dataIndex !== referenceIndex) {
-          continue;
-        }
-
-        if (item && item.data && typeof item.data === 'object' && typeof item.data.tooltip === 'string' && item.data.tooltip !== '') {
-          return item.data.tooltip;
-        }
-      }
-      return '';
+    try {
+      return JSON.parse(JSON.stringify(options));
+    } catch (error) {
+      return null;
     }
-
-    if (params.data && typeof params.data === 'object' && typeof params.data.tooltip === 'string' && params.data.tooltip !== '') {
-      return params.data.tooltip;
-    }
-
-    return '';
   }
 
-  function optionsContainCustomTooltip(options) {
-    if (!options || !Array.isArray(options.series)) {
-      return false;
-    }
-
-    for (var i = 0; i < options.series.length; i += 1) {
-      var series = options.series[i];
-      if (!series || !Array.isArray(series.data)) {
+  function applyActiveState(container, activeType) {
+    var buttons = container.querySelectorAll('[data-switch-type]');
+    for (var i = 0; i < buttons.length; i += 1) {
+      var button = buttons[i];
+      if (!(button instanceof HTMLElement)) {
         continue;
       }
-      for (var j = 0; j < series.data.length; j += 1) {
-        var point = series.data[j];
-        if (point && typeof point === 'object' && !Array.isArray(point) && typeof point.tooltip === 'string' && point.tooltip !== '') {
-          return true;
-        }
+
+      var isActive = button.getAttribute('data-switch-type') === activeType;
+      if (isActive) {
+        button.classList.add('is-active');
+        button.classList.add('active');
+        button.setAttribute('aria-pressed', 'true');
+      } else {
+        button.classList.remove('is-active');
+        button.classList.remove('active');
+        button.setAttribute('aria-pressed', 'false');
       }
     }
-
-    return false;
   }
 
-  function ensureCustomTooltipFormatter(options) {
-    if (!optionsContainCustomTooltip(options)) {
-      return;
+  function getInitOptions(options) {
+    var initOpts = {};
+    if (options && options._echartsAddon && options._echartsAddon.renderer === 'svg') {
+      initOpts.renderer = 'svg';
+    }
+    return initOpts;
+  }
+
+  function prepareOptions(options) {
+    var normalized = cloneOptions(options);
+    if (!normalized) {
+      return null;
     }
 
-    if (!options.tooltip || typeof options.tooltip !== 'object') {
-      options.tooltip = { trigger: 'item' };
+    if (normalized._echartsAddon) {
+      delete normalized._echartsAddon;
     }
 
-    options.tooltip.formatter = function (params) {
-      if (Array.isArray(params) && params.length > 0) {
-        var first = params[0];
-        var title = (first.axisValueLabel || first.name || '').toString();
-        var lines = [];
-        if (title !== '') {
-          lines.push(title);
-        }
-        for (var i = 0; i < params.length; i += 1) {
-          var p = params[i];
-          var value = p && p.value;
-          if (Array.isArray(value)) {
-            value = value.length > 1 ? value[1] : value[0];
-          }
-          if (value === null || typeof value === 'undefined' || value === '') {
-            continue;
-          }
-          lines.push((p.marker || '') + (p.seriesName || '') + ': ' + value);
-        }
-
-        var axisDefault = lines.join('<br/>');
-        var axisCustom = pickTooltipFromParams(params);
-        if (axisCustom !== '') {
-          return axisCustom + '<br/>' + axisDefault;
-        }
-
-        return axisDefault;
-      }
-
-      if (params && typeof params === 'object') {
-        var pv = params.value;
-        if (Array.isArray(pv)) {
-          pv = pv.length > 1 ? pv[1] : pv[0];
-        }
-        var pname = (params.name || params.seriesName || '').toString();
-        var itemCustom = pickTooltipFromParams(params);
-        var valueLine = '';
-        if (pname !== '') {
-          valueLine = pname + ': ' + pv;
-        } else {
-          valueLine = String(pv);
-        }
-
-        if (itemCustom !== '') {
-          return itemCustom + '<br/>' + valueLine;
-        }
-
-        return valueLine;
-      }
-
-      return '';
-    };
+    return normalized;
   }
 
   function exportChartAsPdf(chart, fileName) {
@@ -425,7 +355,7 @@
     return true;
   }
 
-  function applyAddonToolboxFeatures(options, chart) {
+  function applyPdfToolboxFeature(options, chart) {
     if (!options || !options.toolbox || typeof options.toolbox !== 'object') {
       return;
     }
@@ -456,202 +386,70 @@
     };
   }
 
-  function hasTimelineOptions(options) {
-    if (!options || typeof options !== 'object') {
-      return false;
-    }
-
-    if (options.baseOption && options.baseOption.timeline) {
-      return true;
-    }
-
-    return !!options.timeline;
-  }
-
-  function applyTimelineViewportStart(chart, options, addonMeta, element) {
-    if (!hasTimelineOptions(options)) {
+  function initSwitcher(container) {
+    if (!(container instanceof HTMLElement) || container.dataset.switcherReady === '1') {
       return;
     }
 
-    var timelineMeta = addonMeta && addonMeta.timeline && typeof addonMeta.timeline === 'object'
-      ? addonMeta.timeline
-      : null;
-
-    if (!timelineMeta || timelineMeta.startInViewport !== true) {
+    var chartEl = container.querySelector('.js-echarts-switch-chart');
+    if (!(chartEl instanceof HTMLElement) || typeof window.echarts === 'undefined') {
       return;
     }
 
-    var pauseWhenOutOfView = timelineMeta.pauseWhenOutOfView === true;
-    var once = timelineMeta.once !== false;
-
-    var play = function () {
-      chart.dispatchAction({
-        type: 'timelinePlayChange',
-        playState: true
-      });
-    };
-
-    var pause = function () {
-      chart.dispatchAction({
-        type: 'timelinePlayChange',
-        playState: false
-      });
-    };
-
-    if (typeof IntersectionObserver === 'undefined') {
-      play();
+    var optionsMap = decodeOptionsMap(container.getAttribute('data-switch-options'));
+    if (!optionsMap || typeof optionsMap !== 'object') {
       return;
     }
 
-    var hasStarted = false;
-    var observer = new IntersectionObserver(function (entries) {
-      for (var i = 0; i < entries.length; i += 1) {
-        var entry = entries[i];
-        if (entry.target !== element) {
-          continue;
-        }
+    var defaultType = container.getAttribute('data-switch-default') || 'bar';
 
-        if (entry.isIntersecting) {
-          play();
-          hasStarted = true;
-          if (once && !pauseWhenOutOfView) {
-            observer.unobserve(element);
-          }
-          continue;
-        }
-
-        if (pauseWhenOutOfView && hasStarted) {
-          pause();
-        }
-      }
-    }, {
-      root: null,
-      threshold: 0.35
-    });
-
-    observer.observe(element);
-  }
-
-  function initChartElement(element) {
-    if (!element || element.dataset.echartsInitialized === '1') {
-      return;
-    }
-
-    if (typeof window.echarts === 'undefined') {
-      return;
-    }
-
-    var options = decodeOptions(element.getAttribute('data-echarts-options'));
-    if (!options) {
-      return;
-    }
-
-    var addonMeta = options._echartsAddon && typeof options._echartsAddon === 'object'
-      ? options._echartsAddon
-      : {};
-    if (options._echartsAddon) {
-      delete options._echartsAddon;
-    }
-
-    ensureCustomTooltipFormatter(options);
-
-    var initOpts = {};
-    if (addonMeta.renderer === 'svg') {
-      initOpts.renderer = 'svg';
-    }
-
-    var chart = window.echarts.init(element, null, initOpts);
-    applyAddonToolboxFeatures(options, chart);
-    chart.setOption(options);
-    applyTimelineViewportStart(chart, options, addonMeta, element);
-    element.dataset.echartsInitialized = '1';
-
-    chart.on('click', function (params) {
-      var link = '';
-      var linkTarget = '_self';
-
-      if (params && params.data && typeof params.data === 'object' && !Array.isArray(params.data)) {
-        if (typeof params.data.link === 'string' && params.data.link !== '') {
-          link = params.data.link;
-        } else if (params.data.link && typeof params.data.link === 'object' && typeof params.data.link.href === 'string' && params.data.link.href !== '') {
-          link = params.data.link.href;
-          if (typeof params.data.link.target === 'string' && params.data.link.target !== '') {
-            linkTarget = params.data.link.target;
-          }
-        }
-
-        if (typeof params.data.link_target === 'string' && params.data.link_target !== '') {
-          linkTarget = params.data.link_target;
-        }
+    container.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!(target instanceof Element)) {
+        return;
       }
 
-      if (!link && params && typeof params.seriesIndex === 'number' && options && Array.isArray(options.series)) {
-        var series = options.series[params.seriesIndex];
-        if (series && typeof series === 'object' && typeof series.link === 'string' && series.link !== '') {
-          link = series.link;
-        }
+      var button = target.closest('[data-switch-type]');
+      if (!(button instanceof HTMLElement)) {
+        return;
       }
 
-      if (typeof link === 'string' && link !== '') {
-        if (linkTarget === '_blank') {
-          var win = window.open(link, '_blank', 'noopener,noreferrer');
-          if (win) {
-            win.opener = null;
-          }
-          return;
-        }
-
-        window.location.href = link;
+      var type = button.getAttribute('data-switch-type') || '';
+      var nextOptions = optionsMap[type];
+      if (!nextOptions) {
+        return;
       }
-    });
 
-    window.addEventListener('resize', function () {
+      var chart = window.echarts.getInstanceByDom(chartEl);
+      if (!chart) {
+        chart = window.echarts.init(chartEl, null, getInitOptions(nextOptions));
+      }
+
+      var prepared = prepareOptions(nextOptions);
+      if (!prepared) {
+        return;
+      }
+
+      applyPdfToolboxFeature(prepared, chart);
+      chart.setOption(prepared, true, true);
       chart.resize();
+      applyActiveState(container, type);
     });
+
+    applyActiveState(container, defaultType);
+    container.dataset.switcherReady = '1';
   }
 
-  function initAll(scope) {
-    var root = scope || document;
-    if (root.matches && root.matches('[data-echarts-options]')) {
-      initChartElement(root);
+  function initAll(root) {
+    var scope = root || document;
+    var containers = scope.querySelectorAll('[data-echarts-switcher]');
+    for (var i = 0; i < containers.length; i += 1) {
+      initSwitcher(containers[i]);
     }
-    var nodes = root.querySelectorAll('[data-echarts-options]');
-    for (var i = 0; i < nodes.length; i += 1) {
-      initChartElement(nodes[i]);
-    }
-  }
-
-  function registerMutationObserver() {
-    if (typeof MutationObserver === 'undefined') {
-      return;
-    }
-
-    var observer = new MutationObserver(function (mutations) {
-      for (var i = 0; i < mutations.length; i += 1) {
-        var mutation = mutations[i];
-        if (!mutation.addedNodes || mutation.addedNodes.length === 0) {
-          continue;
-        }
-
-        for (var j = 0; j < mutation.addedNodes.length; j += 1) {
-          var node = mutation.addedNodes[j];
-          if (!node || node.nodeType !== 1) {
-            continue;
-          }
-          initAll(node);
-        }
-      }
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     initAll(document);
-    registerMutationObserver();
   });
 
   document.addEventListener('rex:ready', function (event) {

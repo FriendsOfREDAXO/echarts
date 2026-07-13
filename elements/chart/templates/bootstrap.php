@@ -21,7 +21,11 @@ $yformLimit = (int) ($elementData['yform_limit'] ?? 12);
 $showLegend = in_array((string) ($elementData['show_legend'] ?? '1'), ['1', 'true', 'on', 'yes'], true);
 $showTooltip = in_array((string) ($elementData['show_tooltip'] ?? '1'), ['1', 'true', 'on', 'yes'], true);
 $showLabels = in_array((string) ($elementData['show_labels'] ?? ''), ['1', 'true', 'on', 'yes'], true);
+$showPieInsideValues = in_array((string) ($elementData['show_pie_inside_values'] ?? ''), ['1', 'true', 'on', 'yes'], true);
 $showGrid = in_array((string) ($elementData['show_grid'] ?? '1'), ['1', 'true', 'on', 'yes'], true);
+$showExportButtons = in_array((string) ($elementData['show_export_buttons'] ?? ''), ['1', 'true', 'on', 'yes'], true);
+$exportSvg = in_array((string) ($elementData['export_svg'] ?? ''), ['1', 'true', 'on', 'yes'], true);
+$exportPdf = in_array((string) ($elementData['export_pdf'] ?? ''), ['1', 'true', 'on', 'yes'], true);
 $optionsJson = trim((string) ($elementData['chart_options_json'] ?? ''));
 
 if ($sourceType === 'yform') {
@@ -53,8 +57,10 @@ if ($options === []) {
     if (preg_match('/^#[0-9a-fA-F]{6}$/', $globalColor) === 1) {
         $palette = [strtolower($globalColor)];
     }
-    $options = PresetFactory::fromType($chartType, $rows, $chartTitle, $showLegend, $palette, $showTooltip, $showLabels, $showGrid);
+    $options = PresetFactory::fromType($chartType, $rows, $chartTitle, $showLegend, $palette, $showTooltip, $showLabels, $showGrid, $showPieInsideValues);
 }
+
+$options = PresetFactory::withExportToolbox($options, $showExportButtons, $exportSvg, $exportPdf, $chartTitle);
 ?>
 <section class="echarts-element echarts-element-bootstrap">
     <div class="container">

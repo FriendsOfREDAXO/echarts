@@ -16,7 +16,7 @@ return [
             ],
             [
                 'label' => 'Anzeige',
-                'fields' => ['show_legend', 'show_tooltip', 'show_labels', 'show_grid'],
+                'fields' => ['show_legend', 'show_tooltip', 'show_labels', 'show_pie_inside_values', 'show_grid', 'show_export_buttons', 'export_svg', 'export_pdf'],
             ],
             [
                 'label' => 'Erweitert',
@@ -42,6 +42,8 @@ return [
                 'area' => 'Fläche',
                 'pie' => 'Pie',
                 'donut' => 'Donut',
+                'gauge_simple' => 'Gauge (Simple)',
+                'gauge_ring' => 'Gauge (Ring)',
                 'scatter' => 'Scatter',
             ],
             'default' => 'bar',
@@ -165,10 +167,37 @@ return [
             'label' => 'Werte-Labels anzeigen',
             'notice' => 'Zeigt Werte direkt am Datenpunkt/Balken an.',
         ],
+        'show_pie_inside_values' => [
+            'type' => 'checkbox',
+            'label' => 'Pie/Donut-Werte in der Torte anzeigen',
+            'notice' => 'Zeigt Werte innerhalb von Pie/Donut-Segmenten, wenn genug Platz vorhanden ist.',
+            'default' => 0,
+            'visible_if' => ['chart_type' => ['pie', 'donut']],
+        ],
         'show_grid' => [
             'type' => 'checkbox',
             'label' => 'Grid-Linien anzeigen',
             'default' => 1,
+        ],
+        'show_export_buttons' => [
+            'type' => 'checkbox',
+            'label' => 'Export-Buttons anzeigen',
+            'notice' => 'Zeigt Export-Buttons direkt in der Grafik (Toolbox).',
+            'default' => 0,
+        ],
+        'export_svg' => [
+            'type' => 'checkbox',
+            'label' => 'SVG-Export bevorzugen',
+            'notice' => 'Aktiviert SVG-Renderer für schärfere Vektor-Exporte.',
+            'default' => 0,
+            'visible_if' => ['show_export_buttons' => ['1']],
+        ],
+        'export_pdf' => [
+            'type' => 'checkbox',
+            'label' => 'PDF-Export anzeigen',
+            'notice' => 'Öffnet einen druckfertigen Dialog (als PDF speicherbar).',
+            'default' => 0,
+            'visible_if' => ['show_export_buttons' => ['1']],
         ],
         'yform_table' => [
             'type' => 'text',

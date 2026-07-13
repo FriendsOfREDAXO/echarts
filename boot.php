@@ -38,7 +38,17 @@ if (\rex::isBackend() && \rex::getUser()) {
     \rex_view::addJsFile($versionedUrl('echarts.min.js'));
     \rex_view::addJsFile($versionedUrl('echarts-addon.js'));
 
+    $pdfOutAvailable = \rex_addon::exists('pdfout') && \rex_addon::get('pdfout')->isAvailable() && class_exists(\FriendsOfRedaxo\PdfOut\PdfOut::class);
+    $pdfExportToken = \rex_csrf_token::factory('echarts_pdf_export');
+    \rex_view::setJsProperty('echarts_pdf_export', [
+        'enabled' => $pdfOutAvailable,
+        'url' => \rex_url::backendController(['rex-api-call' => 'echarts_pdf_export']),
+        'token' => $pdfExportToken->getValue(),
+    ]);
+
     if (\rex_be_controller::getCurrentPage() === 'echarts/demo') {
+        \rex_view::addJsFile($versionedUrl('echarts-demo-geo.js'));
+        \rex_view::addJsFile($versionedUrl('echarts-demo-switcher.js'));
         \rex_view::setJsProperty('echarts_demo', true);
     }
 }
